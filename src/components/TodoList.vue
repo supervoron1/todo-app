@@ -85,9 +85,9 @@
         return this.$store.getters.todosFiltered
       }
     },
-    // mounted(){
-    //   this.getTodos();
-    // },
+    mounted(){
+      this.getTodos();
+    },
     methods: {
       getTodos() {
         this.$store.dispatch('getTodos')

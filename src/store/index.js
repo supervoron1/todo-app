@@ -34,7 +34,7 @@ export default new Vuex.Store({
 
   getters: {
     getTodos(state) {
-      return state.todos;
+      return  state.todos
     },
     remaining(state) {
       return state.todos.filter(todo => !todo.completed).length
@@ -57,9 +57,10 @@ export default new Vuex.Store({
     }
   },
   mutations: {
-    setTodos(state, payload) {
-      state.todos = payload;
+    setTodos(state, todos) {
+      state.todos = todos;
     },
+
     addTodo(state, todo) {
       state.todos.push({
         id: todo.id,
@@ -93,7 +94,7 @@ export default new Vuex.Store({
   },
   actions: {
     getTodos({commit}) {
-      Vue.http.get(this.state.URL_API)
+      Vue.http.get('../todos.json')
         .then(response => response.json())
         .then(todos => commit('setTodos', todos))
     },
