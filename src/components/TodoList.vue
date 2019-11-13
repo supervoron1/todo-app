@@ -17,7 +17,7 @@
                       v-model="newTodo" @keyup.enter="addTodo" required></textarea>
             <transition-group name="fade" enter-active-class="animated fadeInUp"
                               leave-active-class="animated fadeOutDown">
-                <todo-item v-for="todo in todosFiltered" :key="todo.id" :todo="todo"
+                <todo-item v-for="todo in todos" :key="todo.id" :todo="todo"
                            :checkAll="!anyRemaining">
                 </todo-item>
             </transition-group>
@@ -75,8 +75,8 @@
       }
     },
     computed: {
-      todos() {
-        return this.$store.state.todos
+        todos () {
+       return this.$store.getters.getTodos;
       },
       anyRemaining() {
         return this.$store.getters.anyRemaining
@@ -86,12 +86,14 @@
       }
     },
     mounted(){
-      this.getTodos();
+        if (this.$store.getters.getTodos.length == 0) {
+            this.$store.dispatch('getTodos')
+        }
     },
     methods: {
-      getTodos() {
-        this.$store.dispatch('getTodos')
-      },
+      // getTodos() {
+      //   this.$store.dispatch('getTodos')
+      // },
       details() {
         this.showDetails = !this.showDetails;
       },

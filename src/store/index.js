@@ -34,7 +34,28 @@ export default new Vuex.Store({
 
   getters: {
     getTodos(state) {
-      return  state.todos
+        let todos = [
+            {
+                'id': 1,
+                'title': 'Задача 1',
+                'completed': false,
+                'editing': false,
+            },
+            {
+                'id': 2,
+                'title': 'Задача 2',
+                'completed': false,
+                'editing': false,
+            },
+            {
+                'id': 3,
+                'title': 'Задача 3',
+                'completed': false,
+                'editing': false,
+            }
+        ]
+      return  todos;
+        // state.todos
     },
     remaining(state) {
       return state.todos.filter(todo => !todo.completed).length
