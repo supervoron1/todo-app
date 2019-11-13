@@ -75,6 +75,9 @@
       }
     },
     computed: {
+      todos() {
+        return this.$store.state.todos
+      },
       anyRemaining() {
         return this.$store.getters.anyRemaining
       },
@@ -82,7 +85,13 @@
         return this.$store.getters.todosFiltered
       }
     },
+    // mounted(){
+    //   this.getTodos();
+    // },
     methods: {
+      getTodos() {
+        this.$store.dispatch('getTodos')
+      },
       details() {
         this.showDetails = !this.showDetails;
       },

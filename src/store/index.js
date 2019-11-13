@@ -1,31 +1,41 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import VueResource from 'vue-resource'
 
 Vue.use(Vuex);
+Vue.use(VueResource);
 
 export default new Vuex.Store({
   state: {
+    URL_API: 'todos.json',
     filter: 'all',
-    todos: [{
-      'id': 1,
-      'title': 'Задача 1',
-      'completed': false,
-      'editing': false,
-    },
-      {
-        'id': 2,
-        'title': 'Задача 2',
-        'completed': false,
-        'editing': false,
-      },
-      {
-        'id': 3,
-        'title': 'Задача 3',
-        'completed': false,
-        'editing': false,
-      }]
+    todos: []
+      // [
+      //   {
+      //   'id': 1,
+      //   'title': 'Задача 1',
+      //   'completed': false,
+      //   'editing': false,
+      // },
+      //   {
+      //     'id': 2,
+      //     'title': 'Задача 2',
+      //     'completed': false,
+      //     'editing': false,
+      //   },
+      //   {
+      //     'id': 3,
+      //     'title': 'Задача 3',
+      //     'completed': false,
+      //     'editing': false,
+      //   }
+      // ]
   },
+
   getters: {
+    getTodos(state) {
+      return state.todos;
+    },
     remaining(state) {
       return state.todos.filter(todo => !todo.completed).length
     },
@@ -47,6 +57,9 @@ export default new Vuex.Store({
     }
   },
   mutations: {
+    setTodos(state, payload) {
+      state.todos = payload;
+    },
     addTodo(state, todo) {
       state.todos.push({
         id: todo.id,
@@ -79,6 +92,11 @@ export default new Vuex.Store({
     }
   },
   actions: {
+    getTodos({commit}) {
+      Vue.http.get(this.state.URL_API)
+        .then(response => response.json())
+        .then(todos => commit('setTodos', todos))
+    },
     addTodo(context, todo) {
       setTimeout(() => {
         context.commit('addTodo', todo)
