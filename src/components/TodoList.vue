@@ -17,6 +17,12 @@
             </div>
             <textarea type="text" placeholder="Enter a title for this card..."
                       v-model="newTodo" @keyup.enter="addTodo" required></textarea>
+            <transition-group name="fade" enter-active-class="animated fadeInUp"
+                              leave-active-class="animated fadeOutDown">
+                <todo-item v-for="todo in todosFiltered" :key="todo.id" :todo="todo"
+                           :checkAll="!anyRemaining">
+                </todo-item>
+            </transition-group>
             <div class="form-btn">
                 <div class="sub-btn">
                     <button type="submit" @click="addTodo" name="button" class="add-btn">Add Card
@@ -26,22 +32,7 @@
                 </div>
                 <button class="close-btn" @click="showMenu"
                         @keyup.esc="hideMenu"><span class="more add-more">...</span></button>
-                <!--                <div class="drop-menu" :class="{show: this.showModal}">-->
-                <!--                    <button @click="hideMenu" type="button" class="drop-btn">&times;</button>-->
-                <!--                    &lt;!&ndash;                    <todo-filtered></todo-filtered>&ndash;&gt;-->
-                <!--                    &lt;!&ndash;                    <button @click="selectAll" type="button" class="drop-btn">&ndash;&gt;-->
-                <!--                    &lt;!&ndash;                        {{this.anyRemaining ? 'Select' : 'Unselect'}} All&ndash;&gt;-->
-                <!--                    &lt;!&ndash;                    </button>&ndash;&gt;-->
-                <!--                    &lt;!&ndash;                    <button @click="removeDone" type="button" class="drop-btn">RemoveDone</button>&ndash;&gt;-->
-                <!--                    <button @click="sortReverse" type="button" class="drop-btn">SortReverse</button>-->
-                <!--                </div>-->
             </div>
-            <transition-group name="fade" enter-active-class="animated fadeInUp"
-                              leave-active-class="animated fadeOutDown">
-                <todo-item v-for="todo in todosFiltered" :key="todo.id" :todo="todo"
-                           :checkAll="!anyRemaining">
-                </todo-item>
-            </transition-group>
             <div class="extra-container">
                 <todo-check-all></todo-check-all>
                 <todo-items-remaining></todo-items-remaining>
@@ -408,7 +399,7 @@
         font-size: 13px;
         border-top: 1px solid lightgrey;
         padding-top: 10px;
-        margin-bottom: 10px;
+        margin-top: 10px;
     }
     button {
         background-color: transparent;
@@ -418,6 +409,10 @@
 
         &.filter:hover {
             background: lightgrey;
+        }
+        &.filter {
+            padding: 5px;
+            border-radius: 5px;
         }
 
         &:focus {
