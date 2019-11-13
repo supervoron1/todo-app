@@ -3,10 +3,8 @@
         <div class="wrapper">
             <div class="header">
                 <h3>{{ title }}</h3>
-                <button class="close-btn" @click="showMenu"
-                        @keyup.esc="hideMenu"><span class="more">...</span></button>
+                <button class="close-btn" @click="showMenu"><span class="more">...</span></button>
                 <div class="drop-menu top" :class="{show: this.showModal}">
-                    <button @click="hideMenu" type="button" class="drop-btn">&times;</button>
                     <button class="drop-btn">
                         <todo-check-all></todo-check-all>
                     </button>
@@ -30,21 +28,21 @@
                     <button class="close-btn" @click="clearField"><i class="fas fa-times"></i>
                     </button>
                 </div>
-                <button class="close-btn" @click="showMenu"
-                        @keyup.esc="hideMenu"><span class="more add-more">...</span></button>
+                <button class="close-btn" @click="details"><span class="more add-more">...</span>
+                </button>
             </div>
-            <div class="extra-container">
-                <todo-check-all></todo-check-all>
-                <todo-items-remaining></todo-items-remaining>
-            </div>
-
-            <div class="extra-container">
-                <todo-filtered></todo-filtered>
-
-                <div>
-                    <transition name="fade">
-                        <todo-clear-completed></todo-clear-completed>
-                    </transition>
+            <div class="details" :class="{show: this.showDetails}">
+                <div class="extra-container">
+                    <todo-check-all></todo-check-all>
+                    <todo-items-remaining></todo-items-remaining>
+                </div>
+                <div class="extra-container">
+                    <todo-filtered></todo-filtered>
+                    <div>
+                        <transition name="fade">
+                            <todo-clear-completed></todo-clear-completed>
+                        </transition>
+                    </div>
                 </div>
             </div>
         </div>
@@ -72,7 +70,8 @@
         title: 'Задачи',
         newTodo: '',
         idForTodo: 4,
-        showModal: false
+        showModal: false,
+        showDetails: false
       }
     },
     computed: {
@@ -84,16 +83,17 @@
       }
     },
     methods: {
+      details() {
+        this.showDetails = !this.showDetails;
+      },
       addTodo() {
         if (this.newTodo.trim().length === 0) {
           return
         }
-
         this.$store.dispatch('addTodo', {
           id: this.idForTodo,
           title: this.newTodo,
         });
-
         this.newTodo = '';
         this.idForTodo++
       },
@@ -101,36 +101,24 @@
         this.newTodo = '';
       },
       showMenu() {
-        this.showModal = true;
-      },
-      hideMenu() {
-        this.showModal = false;
+        this.showModal = !this.showModal;
       },
       sortReverse() {
         this.$store.state.todos.reverse();
         this.showModal = false;
       },
       clearCompleted() {
-        this.$store.dispatch('clearCompleted')
-        this.showModal = false;
-      },
-      selectAll() {
-        if (this.anyRemaining) {
-          this.$store.state.todos.forEach(todo => {
-            todo.done = true;
-          })
-        } else {
-          this.$store.state.todos.forEach(todo => {
-            todo.done = false;
-          })
-        }
+        this.$store.dispatch('clearCompleted');
         this.showModal = false;
       },
     }
   }
 </script>
 
+
 <style lang="scss">
+    @import url("https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css");
+
     .wrapper {
         position: relative;
         max-width: 370px;
@@ -163,6 +151,26 @@
         border-bottom: outset;
         outline: none;
         background: #ffffff !important;
+    }
+
+    button {
+        background-color: transparent;
+        appearance: none;
+        border: none;
+
+        &.filter:hover {
+            background: lightgrey;
+        }
+
+        &.filter {
+            margin-right: 7px;
+            padding: 5px;
+            border-radius: 5px;
+        }
+
+        &:focus {
+            outline: none;
+        }
     }
 
     .add-btn {
@@ -208,12 +216,13 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-top: 10px;
+        margin: 10px 0 12px 0;
         border-bottom: outset;
         padding: 10px;
         border-radius: 5px;
         background-color: #fff;
         list-style-type: none;
+        animation-duration: 0.3s;
     }
 
     .todo-item:hover {
@@ -301,8 +310,13 @@
         transform: rotate(45deg);
     }
 
+    .details {
+        display: none;
+    }
+
     .show {
         display: flex;
+        flex-direction: column;
     }
 
     .drop-btn {
@@ -316,8 +330,7 @@
 
     .drop-btn:first-child {
         border-radius: 5px 5px 0 0;
-        padding: 0 15px;
-        text-align: end;
+        padding-top: 10px;
     }
 
     .drop-btn:last-child {
@@ -329,65 +342,6 @@
         color: #000;
     }
 
-    @media (max-width: 320px) {
-        .drop-menu {
-            left: 145px;
-        }
-    }
-
-    @media (max-width: 375px) and (min-width: 321px) {
-        .drop-menu {
-            left: 200px;
-        }
-    }
-
-    @import url("https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css");
-
-    .todo-item {
-        margin-bottom: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        animation-duration: 0.3s;
-    }
-
-    .remove-item {
-        cursor: pointer;
-        margin-left: 14px;
-
-        &:hover {
-            color: black;
-        }
-    }
-
-    .todo-item-left {
-        display: flex;
-        align-items: center;
-    }
-
-    .todo-item-label {
-        padding: 10px;
-        border: 1px solid white;
-        margin-left: 12px;
-    }
-
-    .todo-item-edit {
-        font-size: 24px;
-        color: #2c3e50;
-        margin-left: 12px;
-        width: 100%;
-        padding: 10px;
-        border: 1px solid #ccc; //override defaults
-        font-family: "Avenir", Helvetica, Arial, sans-serif;
-
-        &:focus {
-            outline: none;
-        }
-    }
-
-
-
-    /*--------------------might need--------------------*/
     .active {
         background: lightgrey;
     }
@@ -400,23 +354,9 @@
         border-top: 1px solid lightgrey;
         padding-top: 10px;
         margin-top: 10px;
-    }
-    button {
-        background-color: transparent;
-        appearance: none;
-        border: none;
-        margin-right: 7px;
 
-        &.filter:hover {
-            background: lightgrey;
-        }
-        &.filter {
-            padding: 5px;
-            border-radius: 5px;
-        }
-
-        &:focus {
-            outline: none;
+        & div:last-child button.filter {
+            margin: 0;
         }
     }
 
@@ -429,5 +369,17 @@
     .fade-enter,
     .fade-leave-to {
         opacity: 0;
+    }
+
+    @media (max-width: 320px) {
+        .drop-menu {
+            left: 145px;
+        }
+    }
+
+    @media (max-width: 375px) and (min-width: 321px) {
+        .drop-menu {
+            left: 200px;
+        }
     }
 </style>
